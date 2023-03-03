@@ -16,17 +16,17 @@ export class PantryService {
   }
 
   async createProduct(createProductDto: CreateProductDto): Promise<Product> {
-    const requiredFields = ['name', 'quantity', 'price'];
-    const keys = Object.keys(createProductDto);
+    const requiredFields = ['name', 'price', 'quantity'];
     const missingFields = requiredFields.filter(
-      (field) => !keys.includes(field),
+      (field) => !(field in createProductDto),
     );
-
     if (missingFields.length > 0) {
-      throw new Error(
-        `Product's Missing required fields: ${missingFields.join(', ')}`,
-      );
+      const missingFieldsMessage = `Product's missing required fields: ${missingFields.join(
+        ', ',
+      )}`;
+      throw new Error(missingFieldsMessage);
     }
+
     const product = this.productRepository.create(createProductDto);
     return this.productRepository.save(product);
   }
