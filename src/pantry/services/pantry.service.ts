@@ -1,7 +1,15 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { ObjectID } from 'mongodb';
+import { Equal, Repository } from 'typeorm';
 import { CreateProductDto } from '../dto/create-product.dto';
+import { UpdateProductDto } from '../dto/update-product.dto';
 import { Product } from '../entities/product.entity';
 
 @Injectable()
@@ -12,7 +20,25 @@ export class PantryService {
   ) {}
 
   async getProducts(): Promise<Product[]> {
-    return this.productRepository.find();
+    try {
+      return await this.productRepository.find();
+    } catch (error) {
+      throw new HttpException(
+        `Error while getting products: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async getProductById(id: string): Promise<Product> {
+    const objectIDToSearch = new ObjectID(id);
+    const product = await this.productRepository.findOne({
+      where: { _id: objectIDToSearch },
+    });
+    if (!product) {
+      throw new NotFoundException(`Product with id ${id} not found`);
+    }
+    return product;
   }
 
   async createProduct(createProductDto: CreateProductDto): Promise<Product> {
@@ -24,11 +50,42 @@ export class PantryService {
       const missingFieldsMessage = `Product's missing required fields: ${missingFields.join(
         ', ',
       )}`;
-      throw new Error(missingFieldsMessage);
+      throw new BadRequestException(missingFieldsMessage);
     }
 
     const product = this.productRepository.create(createProductDto);
     return this.productRepository.save(product);
+  }
+
+  async updateProduct(
+    id: string,
+    updateProductDto: UpdateProductDto,
+  ): Promise<Product> {
+    try {
+      const product = await this.getProductById(id);
+      const { name, description, price, quantity } = updateProductDto;
+      if (!name && !description && !price && !quantity) {
+        throw new BadRequestException(
+          'At least one field must be provided to update the product',
+        );
+      }
+      const updatedProduct = {
+        ...product,
+        ...updateProductDto,
+      };
+      return this.productRepository.save(updatedProduct);
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw new HttpException(
+          {
+            statusCode: HttpStatus.NOT_FOUND,
+            message: `Product with id ${id} not found`,
+          },
+          HttpStatus.NOT_FOUND,
+        );
+      }
+      throw error;
+    }
   }
 
   async deleteProduct(productId: string): Promise<{ message: string }> {

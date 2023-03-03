@@ -6,8 +6,10 @@ import {
   Logger,
   Param,
   Post,
+  Put,
 } from '@nestjs/common';
 import { CreateProductDto } from '../dto/create-product.dto';
+import { UpdateProductDto } from '../dto/update-product.dto';
 import { Product } from '../entities/product.entity';
 import { PantryService } from '../services/pantry.service';
 
@@ -33,6 +35,22 @@ export class PantryController {
   ): Promise<Product> {
     try {
       return await this.pantryService.createProduct(createProductDto);
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw error;
+    }
+  }
+
+  @Put('products/:id')
+  async updateProduct(
+    @Param('id') productId: string,
+    @Body() updateProductDto: UpdateProductDto,
+  ): Promise<Product> {
+    try {
+      return await this.pantryService.updateProduct(
+        productId,
+        updateProductDto,
+      );
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw error;
