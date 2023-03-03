@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateProductDto } from '../dto/create-product.dto';
@@ -29,5 +29,15 @@ export class PantryService {
 
     const product = this.productRepository.create(createProductDto);
     return this.productRepository.save(product);
+  }
+
+  async deleteProduct(productId: string): Promise<{ message: string }> {
+    const result = await this.productRepository.delete(productId);
+    if (result.affected === 0) {
+      throw new NotFoundException(`Product with id ${productId} not found`);
+    }
+    return {
+      message: `Product with id ${productId} has been successfully deleted`,
+    };
   }
 }

@@ -1,9 +1,10 @@
+import { ObjectId } from 'mongoose';
 import { Column, Entity, ObjectIdColumn } from 'typeorm';
 
 @Entity({ name: 'products' })
 export class Product {
   @ObjectIdColumn()
-  id: number;
+  id: ObjectId;
 
   @Column()
   name: string;

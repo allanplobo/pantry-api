@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Logger, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Logger,
+  Param,
+  Post,
+} from '@nestjs/common';
 import { CreateProductDto } from '../dto/create-product.dto';
 import { Product } from '../entities/product.entity';
 import { PantryService } from '../services/pantry.service';
@@ -25,6 +33,18 @@ export class PantryController {
   ): Promise<Product> {
     try {
       return await this.pantryService.createProduct(createProductDto);
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw error;
+    }
+  }
+
+  @Delete('products/:id')
+  async deleteProduct(
+    @Param('id') productId: string,
+  ): Promise<{ message: string }> {
+    try {
+      return await this.pantryService.deleteProduct(productId);
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw error;
