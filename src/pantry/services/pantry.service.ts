@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ObjectID } from 'mongodb';
-import { Equal, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreateProductDto } from '../dto/create-product.dto';
 import { UpdateProductDto } from '../dto/update-product.dto';
 import { Product } from '../entities/product.entity';
@@ -76,15 +76,15 @@ export class PantryService {
       return this.productRepository.save(updatedProduct);
     } catch (error) {
       if (error instanceof NotFoundException) {
-        throw new HttpException(
-          {
-            statusCode: HttpStatus.NOT_FOUND,
-            message: `Product with id ${id} not found`,
-          },
-          HttpStatus.NOT_FOUND,
-        );
+        throw new NotFoundException(`Product with id ${id} not found`);
       }
-      throw error;
+      throw new HttpException(
+        {
+          statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+          message: `Error while updating the product with id ${id}: ${error.message}`,
+        },
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
