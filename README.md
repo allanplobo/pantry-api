@@ -9,11 +9,11 @@
 
 ## Tech Stack
 
-[Node.js](https://nodejs.org/en/)
-[NestJS](https://nestjs.com/)
-[MongoDB](https://www.mongodb.com/)
-[Mongoose](https://mongoosejs.com/)
-[TypeORM](https://typeorm.io/)
+- [Node.js](https://nodejs.org/en/)
+- [NestJS](https://nestjs.com/)
+- [MongoDB](https://www.mongodb.com/)
+- [Mongoose](https://mongoosejs.com/)
+- [TypeORM](https://typeorm.io/)
 
 ## Running the app
 
