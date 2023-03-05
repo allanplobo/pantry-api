@@ -7,6 +7,8 @@
 
 # Pantry API
 
+API for managing your pantry' products
+
 ## Tech Stack
 
 - [Node.js](https://nodejs.org/en/)
@@ -20,9 +22,10 @@
 1. Install all the tech stack
 2. Clone the repository
 3. run the following commands:
+
 ```bash
 # install dependences
-$ npm install 
+$ npm install
 
 # run application
 $ npm run start
@@ -34,7 +37,6 @@ $ npm run test
 $ npm run test:cov
 ```
 
-
 ## My LinkedIn
-[You can contact me here! =)](https://www.linkedin.com/in/allanplobo/)
 
+[You can contact me here! =)](https://www.linkedin.com/in/allanplobo/)
