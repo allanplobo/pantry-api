@@ -8,6 +8,8 @@ import { UpdateProductDto } from '../dto/update-product.dto';
 import { Product } from '../entities/product.entity';
 import { PantryService } from './pantry.service';
 
+// TODO: study mongo memory server to remove all mocks
+
 describe('PantryService', () => {
   let service: PantryService;
   let productRepository: Repository<Product>;
