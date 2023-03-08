@@ -27,6 +27,7 @@ describe('PantryController', () => {
             createProduct: jest.fn(),
             updateProduct: jest.fn(),
             deleteProduct: jest.fn(),
+            searchProductsByName: jest.fn(),
           },
         },
       ],
@@ -107,6 +108,32 @@ describe('PantryController', () => {
 
       await expect(controller.getProductById('invalid-id')).rejects.toThrow(
         BadRequestException,
+      );
+    });
+  });
+
+  describe('searchProductsByName', () => {
+    const productId = '123456789012';
+    it('should return a product with the specified ID', async () => {
+      const expectedProducts: Product[] = [
+        {
+          _id: productId,
+          name: 'Test',
+          description: 'Test description 1',
+          price: 10,
+          quantity: 20,
+        },
+      ];
+
+      jest
+        .spyOn(service, 'searchProductsByName')
+        .mockResolvedValue(expectedProducts);
+
+      const products = await controller.searchProducts('Test');
+
+      expect(products).toBe(expectedProducts);
+      expect(service.searchProductsByName).toHaveBeenCalledWith(
+        expectedProducts[0].name,
       );
     });
   });

@@ -90,6 +90,23 @@ describe('PantryService', () => {
     });
   });
 
+  describe('getProductById', () => {
+    it('should return the product with the given Name', async () => {
+      const id = new ObjectId('123456789asd');
+      const product: Product = {
+        _id: id,
+        name: 'Product',
+        price: 10,
+        quantity: 5,
+      };
+      jest
+        .spyOn(productRepository, 'find')
+        .mockResolvedValueOnce(product as any);
+
+      expect(await service.searchProductsByName('Product')).toEqual(product);
+    });
+  });
+
   describe('createProduct', () => {
     it('should create a new product and return it', async () => {
       const product: CreateProductDto = {

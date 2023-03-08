@@ -7,7 +7,7 @@ export class Product {
   _id?: ObjectID;
 
   @Column()
-  name: string;
+  name: string | RegExp;
 
   @Column({ nullable: true })
   description?: string;

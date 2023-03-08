@@ -39,6 +39,16 @@ export class PantryController {
     }
   }
 
+  @Get('products/search/:name')
+  async searchProducts(@Param('name') name: string): Promise<Product[]> {
+    try {
+      return await this.pantryService.searchProductsByName(name);
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw error;
+    }
+  }
+
   @Post('products')
   async createProduct(
     @Body() createProductDto: CreateProductDto,

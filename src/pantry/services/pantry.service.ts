@@ -34,7 +34,6 @@ export class PantryService {
     if (!ObjectID.isValid(id)) {
       throw new BadRequestException(`Invalid id: ${id}`);
     }
-
     const objectIDToSearch = new ObjectID(id);
     const product = await this.productRepository.findOne({
       where: { _id: objectIDToSearch },
@@ -43,6 +42,14 @@ export class PantryService {
       throw new NotFoundException(`Product with id ${id} not found`);
     }
     return product;
+  }
+
+  async searchProductsByName(name: string): Promise<Product[]> {
+    const regex = new RegExp(name, 'i');
+    const products = await this.productRepository.find({
+      where: { name: regex },
+    });
+    return products;
   }
 
   async createProduct(createProductDto: CreateProductDto): Promise<Product> {
