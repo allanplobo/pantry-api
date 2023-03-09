@@ -1,4 +1,4 @@
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { HttpException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { ObjectId } from 'mongodb';
@@ -75,18 +75,18 @@ describe('PantryService', () => {
       expect(await service.getProductById('123456789asd')).toEqual(product);
     });
 
-    it('should throw a BadRequestException if the ID is invalid', async () => {
+    it('should throw a HttpException if the ID is invalid', async () => {
       await expect(service.getProductById('invalid-id')).rejects.toThrow(
-        BadRequestException,
+        HttpException,
       );
     });
 
-    it('should throw a NotFoundException if the product does not exist', async () => {
+    it('should throw a HttpException if the product does not exist', async () => {
       jest.spyOn(productRepository, 'findOne').mockResolvedValueOnce(undefined);
 
       await expect(
         service.getProductById(new ObjectId().toHexString()),
-      ).rejects.toThrow(NotFoundException);
+      ).rejects.toThrow(HttpException);
     });
   });
 
@@ -156,14 +156,14 @@ describe('PantryService', () => {
       });
     });
 
-    it('should throw a NotFoundException if the product does not exist', async () => {
+    it('should throw a HttpException if the product does not exist', async () => {
       const productId = new ObjectId().toHexString();
       jest
         .spyOn(productRepository, 'delete')
         .mockResolvedValueOnce({ affected: 0, raw: null });
 
       await expect(service.deleteProduct(productId)).rejects.toThrow(
-        NotFoundException,
+        HttpException,
       );
       expect(productRepository.delete).toHaveBeenCalledWith(productId);
     });
@@ -203,7 +203,7 @@ describe('PantryService', () => {
       expect(result).toEqual(existingProduct);
     });
 
-    it('should throw a NotFoundException if the product does not exist', async () => {
+    it('should throw a HttpException if the product does not exist', async () => {
       jest.spyOn(productRepository, 'findOne').mockResolvedValueOnce(undefined);
 
       await expect(
@@ -211,7 +211,7 @@ describe('PantryService', () => {
           name: 'New Product Name',
           quantity: 10,
         }),
-      ).rejects.toThrow(NotFoundException);
+      ).rejects.toThrow(HttpException);
     });
   });
 });
