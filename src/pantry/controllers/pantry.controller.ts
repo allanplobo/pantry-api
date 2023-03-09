@@ -29,18 +29,10 @@ export class PantryController {
     }
   }
 
-  @Get('products/:id')
-  async getProductById(@Param('id') productId: string): Promise<Product> {
-    try {
-      return await this.pantryService.getProductById(productId);
-    } catch (error) {
-      this.logger.error(error.message, error.stack);
-      throw error;
-    }
-  }
-
-  @Get('products/search/:name')
-  async searchProducts(@Param('name') name: string): Promise<Product[]> {
+  @Get('products/:name')
+  async searchProductsByName(
+    @Param('name') name: string | undefined,
+  ): Promise<Product[]> {
     try {
       return await this.pantryService.searchProductsByName(name);
     } catch (error) {

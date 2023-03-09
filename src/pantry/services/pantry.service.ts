@@ -31,25 +31,39 @@ export class PantryService {
   }
 
   async getProductById(id: string): Promise<Product> {
-    if (!ObjectID.isValid(id)) {
-      throw new BadRequestException(`Invalid id: ${id}`);
+    try {
+      if (!ObjectID.isValid(id)) {
+        throw new BadRequestException(`Invalid id: ${id}`);
+      }
+      const objectIDToSearch = new ObjectID(id);
+      const product = await this.productRepository.findOne({
+        where: { _id: objectIDToSearch },
+      });
+      if (!product) {
+        throw new NotFoundException(`Product with id ${id} not found`);
+      }
+      return product;
+    } catch (error) {
+      throw new HttpException(
+        `Error while getting products: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
-    const objectIDToSearch = new ObjectID(id);
-    const product = await this.productRepository.findOne({
-      where: { _id: objectIDToSearch },
-    });
-    if (!product) {
-      throw new NotFoundException(`Product with id ${id} not found`);
-    }
-    return product;
   }
 
-  async searchProductsByName(name: string): Promise<Product[]> {
-    const regex = new RegExp(name, 'i');
-    const products = await this.productRepository.find({
-      where: { name: regex },
-    });
-    return products;
+  async searchProductsByName(name: string | undefined): Promise<Product[]> {
+    try {
+      const regex = new RegExp(name, 'i');
+      const products = await this.productRepository.find({
+        where: { name: regex },
+      });
+      return products;
+    } catch (error) {
+      throw new HttpException(
+        `Error while getting products: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   async createProduct(createProductDto: CreateProductDto): Promise<Product> {

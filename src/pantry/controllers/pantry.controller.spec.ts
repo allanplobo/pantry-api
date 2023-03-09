@@ -70,48 +70,6 @@ describe('PantryController', () => {
     });
   });
 
-  describe('getProductById', () => {
-    const productId = '123456789012';
-
-    it('should return a product with the specified ID', async () => {
-      const expectedProduct: Product = {
-        _id: productId,
-        name: 'Test Product 1',
-        description: 'Test description 1',
-        price: 10,
-        quantity: 20,
-      };
-
-      jest.spyOn(service, 'getProductById').mockResolvedValue(expectedProduct);
-
-      const product = await controller.getProductById(productId);
-
-      expect(product).toBe(expectedProduct);
-      expect(service.getProductById).toHaveBeenCalledWith(productId);
-    });
-
-    it('should throw a NotFoundException if no product with the specified ID is found', async () => {
-      jest
-        .spyOn(service, 'getProductById')
-        .mockRejectedValue(new NotFoundException());
-
-      await expect(controller.getProductById(productId)).rejects.toThrow(
-        NotFoundException,
-      );
-      expect(service.getProductById).toHaveBeenCalledWith(productId);
-    });
-
-    it('should throw a BadRequestException if an invalid ID is provided', async () => {
-      jest
-        .spyOn(service, 'getProductById')
-        .mockRejectedValue(new BadRequestException());
-
-      await expect(controller.getProductById('invalid-id')).rejects.toThrow(
-        BadRequestException,
-      );
-    });
-  });
-
   describe('searchProductsByName', () => {
     const productId = '123456789012';
     it('should return a product with the specified ID', async () => {
@@ -129,7 +87,7 @@ describe('PantryController', () => {
         .spyOn(service, 'searchProductsByName')
         .mockResolvedValue(expectedProducts);
 
-      const products = await controller.searchProducts('Test');
+      const products = await controller.searchProductsByName('Test');
 
       expect(products).toBe(expectedProducts);
       expect(service.searchProductsByName).toHaveBeenCalledWith(
